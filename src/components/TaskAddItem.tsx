@@ -1,25 +1,26 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Task } from '../types/Task'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '../redux/store'
+import { addTask } from '../redux/taskSlice'
 
-interface AddTaskInterface{
-    tasks: Task[],
-    handleAddTask: (task: Task) => void
-}
-
-export const TaskAddItem: React.FC<AddTaskInterface> = ({tasks, handleAddTask}) => {
-    const [newTask, setNewTask] = useState<Task>({id: 0, name:'', status: false })
+export const TaskAddItem: React.FC = () => {
+    const tasks = useSelector((state: RootState) => state.tasks)
+    const dispatch = useDispatch<AppDispatch>()
+    const [newTask, setNewTask] = useState<Task>({ id: 0, name: '', status: false })
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setNewTask(prev => ({ ...prev, [name]: value }))
-        console.log(newTask)
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {// e: React.FormEvent can be used too
         e.preventDefault()
-        setNewTask(prev => ({...prev, id: tasks.length + 1, status: false }))
-        console.log(newTask)
-        handleAddTask(newTask)
+        if (newTask.name.trim()) {
+            setNewTask(prev => ({ ...prev, id: tasks.length + 1, status: false }))
+            dispatch(addTask(newTask))
+            setNewTask(prev => ({ ...prev, name:'' }))
+        }
     }
 
     return (

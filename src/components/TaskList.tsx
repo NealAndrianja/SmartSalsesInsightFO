@@ -1,17 +1,15 @@
 import React from 'react'
-import { Task } from '../types/Task'
 import { TaskItem } from './TaskItem'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/store'
 
-interface TaskListProps {
-    tasks: Task[],
-    toogleTask: (taskId: number) => void,
-    deleteTask: (taskId: number) => void,
-}
 
-export const TaskList: React.FC<TaskListProps> = ({ tasks, toogleTask, deleteTask }) => {
+export const TaskList: React.FC = () => {
+    const tasks = useSelector((state: RootState) => state.tasks)
+    console.log(tasks)
     return (
         <>
-            {tasks.map((task, id) => <TaskItem key={id} task={task} toogleTask={toogleTask} deleteTask={deleteTask} />)}
+            {tasks.map((task, id) => <TaskItem key={id} task={task} />)}
         </>
     )
 }
