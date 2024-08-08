@@ -1,20 +1,34 @@
-import React from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { Task } from '../types/Task'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../redux/store'
-import { deleteTask, toggleTask } from '../redux/taskSlice'
+import { modifyTask, removetask } from '../redux/taskSlice'
 
 interface TaskItemProps {
   task: Task,
 }
 
+
 export const TaskItem: React.FC<TaskItemProps>= ({ task }) => {
   const dispatch = useDispatch<AppDispatch>()
+  const [todo, setTodo] = useState<Partial<Task>>(task)
+
+  const handlechange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    const updatedTodo = { [name]: checked };
+    setTodo(updatedTodo);
+    dispatch(modifyTask({ id: task.id, todo: updatedTodo }));
+  }
+
+  const handleDelete = () => {
+    dispatch(removetask(task.id))
+  }
+
   return (
     <div>
-      <input type="checkbox" checked={task.status} onChange={() => dispatch(toggleTask(task.id))}/>
-      <span style={{'textDecoration': task.status ? 'line-through' : 'none'}}>{task.name}</span>  
-      <button onClick={() => dispatch(deleteTask(task.id))}>Delete</button>
+      <input type="checkbox" name='completed' checked={todo.completed} onChange={handlechange}/>
+      <span style={{'textDecoration': todo.completed ? 'line-through' : 'none'}}>{task.title}</span>  
+      <button onClick={handleDelete}>Delete</button>
     </div>
   )
 }

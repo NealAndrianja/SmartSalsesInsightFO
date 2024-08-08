@@ -7,7 +7,7 @@ import { addTask } from '../redux/taskSlice'
 export const TaskAddItem: React.FC = () => {
     const tasks = useSelector((state: RootState) => state.tasks)
     const dispatch = useDispatch<AppDispatch>()
-    const [newTask, setNewTask] = useState<Task>({ id: 0, name: '', status: false })
+    const [newTask, setNewTask] = useState<Omit<Task, 'id'>>({ title: '', completed: false })
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
@@ -16,10 +16,9 @@ export const TaskAddItem: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {// e: React.FormEvent can be used too
         e.preventDefault()
-        if (newTask.name.trim()) {
-            setNewTask(prev => ({ ...prev, id: tasks.length + 1, status: false }))
+        if (newTask.title.trim()) {
             dispatch(addTask(newTask))
-            setNewTask(prev => ({ ...prev, name:'' }))
+            setNewTask(prev => ({ ...prev, title:'' }))
         }
     }
 
@@ -28,7 +27,7 @@ export const TaskAddItem: React.FC = () => {
             <h2>New Task</h2>
             <form onSubmit={handleSubmit}>
                 <label>Task name</label>
-                <input type="text" name='name' value={newTask?.name} onChange={handleChange} />
+                <input type="text" name='title' value={newTask?.title} onChange={handleChange} />
                 <input type="submit" value="Add Task" />
             </form>
         </>
